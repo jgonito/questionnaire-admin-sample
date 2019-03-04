@@ -1,0 +1,11 @@
+{
+    "port": 8085,
+    "db": {
+        "mysql": {
+            "host": "localhost",
+            "user": "root",
+            "password": "",
+            "database": "questionnaire"
+        }
+    }
+}

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" media="screen" href="/static/assets/bootstrap/3.3.7/css/bootstrap.min.css" />
+        <link rel="stylesheet" media="screen" href="/static/assets/font-awesome-4.6.3/css/font-awesome.min.css" />
+        <style>
+            html, body {
+                margin: 0;
+                padding: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 50, 255, 0.2);
+            }
+
+            .login-form {
+                width: 50%;
+                margin: 60px auto 0;
+                padding: 50px 60px 60px;
+                background-color: rgba(255, 255, 255, 1);
+                box-shadow: -1px 1px 15px rgba(0,0,0,0.5);
+                border-radius: 15px;
+                text-align: center;
+            }
+
+            .login-form .header {
+                margin: 2px auto;
+                padding: 2px;
+                font-size: 50px;
+                text-align: center;
+            }
+        </style>
+        <title>Admin Login</title>
+    </head>
+    <body>
+        <div class="container">
+            <form id="login_form" action="/admin/login/" method="post">
+                <div class="login-form">
+                    <div class="header">Admin Login</div>
+                    <div class="form-group form-group-lg">
+                        <div class="input-group">
+                            <div class="input-group-addon">
+                                <i class="fa fa-fw fa-user"></i>
+                            </div>
+                            <input type="text" name="username" class="form-control" placeholder="Username" />
+                        </div>
+                    </div>
+                    <div class="form-group form-group-lg">
+                        <div class="input-group">
+                            <div class="input-group-addon">
+                                <i class="fa fa-fw fa-lock"></i>
+                            </div>
+                            <input type="password" name="password" class="form-control" placeholder="Password" />
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-lg btn-primary btn-block">Sign In</button>
+                    {{#if message}}
+                        <hr/>
+                        <div class="alert alert-{{message.type}}">{{message.text}}</div>
+                    {{/if}}
+                </div>
+            </form>
+        </div>
+        <script src="/static/assets/jquery/jquery-3.2.1.min.js"></script>
+        <script src="/static/assets/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script>
+            (function(win, doc, $){
+                "use strict";
+                
+                
+                
+            })(window, document, $);
+        </script>
+    </body>
+</html>

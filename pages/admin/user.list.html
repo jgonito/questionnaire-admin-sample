@@ -1,0 +1,91 @@
+{{#partial "inline.css"}}
+    <style>
+        #user_list {
+            width: 100%;
+        }
+
+        #user_list [data-id] {
+            cursor: pointer;
+        }
+
+        #user_list thead th:nth-child(4),
+        #user_list thead th:last-child {
+            width: 15%;
+        }
+    </style>
+{{/partial}}
+
+{{#partial "content"}}
+    <div class="row">
+        <div class="col-sm-offset-9 col-sm-3 text-right">
+            <a href="/admin/users/new" class="btn btn-primary">
+                <i class="fa fa-fw fa-plus"></i>&nbsp;New
+            </a>
+        </div>
+    </div>
+    <table id="user_list" class="table">
+        <thead>
+            <th>Last Name</th>
+            <th>First Name</th>
+            <th>Username</th>
+            <th>Is Admin</th>
+            <th>Is Active</th>
+        </thead>
+        <tbody>
+        {{#each users}}
+            <tr data-id="{{this.id}}">
+                <td>{{this.last_name}}</td>
+                <td>{{this.first_name}}</td>
+                <td>{{this.username}}</td>
+                {{#if this.is_admin}}
+                    <td class="text-success">
+                        <i class="fa fa-fw fa-check"></i>
+                    </td>
+                {{else}}
+                    <td class="text-danger">
+                        <i class="fa fa-fw fa-times"></i>
+                    </td>
+                {{/if}}
+                {{#if this.is_active}}
+                    <td class="text-success">
+                        <i class="fa fa-fw fa-check"></i>
+                    </td>
+                {{else}}
+                    <td class="text-danger">
+                        <i class="fa fa-fw fa-times"></i>
+                    </td>
+                {{/if}}
+            </tr>
+        {{else}}
+            <tr class="text-danger no-record">
+                <td colspan="5">
+                    <div class="alert alert-danger text-center">No Records</div>
+                </td>
+            </tr>
+        {{/each}}
+        </tbody>
+    </table>
+{{/partial}}
+
+{{#partial "inline.js"}}
+    <script>
+        (function(win, doc, $){
+            "using strict";
+            
+            $("#user_list").on("click", function(e){
+                e.stopPropagation();
+                var $target = $(e.target);
+                if (!$target[0].hasAttribute("data-id")) {
+                    $target = $target.closest("[data-id]");
+                    if ($target.length === 0) {
+                        return;
+                    }
+                }
+
+                win.location.href = "/admin/users/edit/?id=" + $target.attr("data-id");
+            });
+            
+        })(window, document, $);
+    </script>
+{{/partial}}
+{{> base}}

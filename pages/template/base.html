@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" media="screen" href="/static/assets/bootstrap/3.3.7/css/bootstrap.min.css" />
+        <link rel="stylesheet" media="screen" href="/static/assets/font-awesome-4.6.3/css/font-awesome.min.css" />
+        <link rel="stylesheet" media="screen" href="/static/css/base.css" />
+        {{#block "ext.css"}}{{/block}}
+        {{#block "inline.css"}}{{/block}}
+        <title>Questionnaire &ndash; {{#if title}}{{title}}{{/if}}</title>
+    </head>
+    <body>
+        <div id="menu" class="navbar navbar-default navbar-static-top" role="navigation">
+            <div class="container-fluid">
+                <div class="navbar-header"><a class="navbar-brand" href="#">Questionnaire</a>
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-menubuilder">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                </div>
+                <div class="collapse navbar-collapse navbar-menubuilder">
+                    <ul class="nav navbar-nav navbar-left">
+                        <li data-menu="questionnaires"><a href="/admin/questionnaires/">Questionnaires</a></li>
+                        <li data-menu="questions"><a href="/admin/questions/">Questions</a></li>
+                        <li data-menu="categories"><a href="/admin/categories/">Categories</a></li>
+                        <li data-menu="users"><a href="/admin/users/">Users</a></li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="#user_profile" data-toggle="modal" data-target="#user_profile_modal">{{active_user.username}}</a></li>
+                        <li><a id="logout" href="#logout">Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            {{#block "content"}}{{/block}}
+        </div>
+
+        <div id="user_profile_modal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">{{active_user.first_name}} {{active_user.last_name}}</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="panel panel-primary">
+                            <div class="panel-body">
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <span class="input-group-addon" style="min-width:160px;text-align:left;">Last Name</span>
+                                        <div class="form-control">{{active_user.last_name}}</div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <span class="input-group-addon" style="min-width:160px;text-align:left;">First Name</span>
+                                        <div class="form-control">{{active_user.first_name}}</div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <span class="input-group-addon" style="min-width:160px;text-align:left;">Middle Name</span>
+                                        <div class="form-control">{{active_user.middle_name}}</div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <span class="input-group-addon" style="min-width:160px;text-align:left;">Username</span>
+                                        <div class="form-control">{{active_user.username}}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel panel-primary">
+                            <div class="panel-body">
+                                <form id="user_profile_form" action="/admin/change_password/" method="post">
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <span class="input-group-addon" style="min-width:160px;text-align:left;">Current Password</span>
+                                            <input type="password" id="old_password" name="old_password" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <span class="input-group-addon" style="min-width:160px;text-align:left;">New Password</span>
+                                            <input type="password" id="new_password" name="new_password" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <span class="input-group-addon" style="min-width:160px;text-align:left;">Confirm</span>
+                                            <input type="password" id="confirm_password" name="confirm_password" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-4">
+                                            <button type="button" class="btn btn-default btn-block" data-dismiss="modal">
+                                                <i class="fa fa-fw fa-ban"></i>&nbsp;Cancel
+                                            </button>
+                                        </div>
+                                        <div class="col-sm-4"></div>
+                                        <div class="col-sm-4 text-right">
+                                            <button type="submit" class="btn btn-success btn-block">
+                                                <i class="fa fa-fw fa-lock"></i>&nbsp;Change Password
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{#block "preloaded"}}{{/block}}
+        <script src="/static/assets/jquery/jquery-3.2.1.min.js"></script>
+        <script src="/static/assets/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script src="/static/assets/bootstrap-notify/bootstrap-notify.min.js"></script>
+        {{#block "ext.js"}}{{/block}}
+        <script>
+            (function(win, doc, $){
+                "using strict";
+                
+                {{#if message}}$.notify({"message":"{{message.text}}"}, {"type":"{{message.type}}"});{{/if}}
+
+                var activeMenu = $.trim(win.location.pathname.replace(/\//g, " ")).split(" ")[1] || "";
+                $("#menu .navbar-nav [data-menu='" + activeMenu + "'] > a").addClass("active");
+
+                $("#logout").on("click", function(){
+                    if (confirm("Are you sure you want to logout?")) {
+                        win.location.href = "/admin/logout/";
+                    }
+                });
+
+                $("#user_profile_form").on("submit", function(e){
+                    var $userProfileForm = $(this),
+                        $oldPassword = $userProfileForm.find("#old_password"),
+                        $newPassword = $userProfileForm.find("#new_password"),
+                        $confirmPassword = $userProfileForm.find("#confirm_password"),
+                        oldPassword = $oldPassword.val(),
+                        newPassword = $newPassword.val(),
+                        confirmPassword = $confirmPassword.val();
+
+                    if (oldPassword === "") {
+                        e.preventDefault();
+                        $oldPassword.focus();
+                        alert("Current password cannot be empty");
+                        return;
+                    }
+
+                    if (newPassword === "") {
+                        e.preventDefault();
+                        $newPassword.focus();
+                        alert("New password cannot be empty");
+                        return;
+                    }
+
+                    if (newPassword !== confirmPassword) {
+                        e.preventDefault();
+                        $newPassword.focus();
+                        alert("New password does not matched");
+                        return;
+                    }
+
+                    if (!confirm("Are you sure you want to change your password?\nWARNING: You will automatically logout after changing password.")) {
+                        e.preventDefault();
+                    }
+                });
+                
+                function JSONStringifyEscape(obj) {
+                    if (obj && obj instanceof Object) {
+                        (function _loop(obj){
+                            for (var k in obj) {
+                                if (obj.hasOwnProperty(k)) {
+                                    var v = obj[k];
+                                    switch (typeof v) {
+                                        case "string":
+                                        obj[k] = v.replace(/\'/g, "&#39;");
+                                        break;
+                                    case "object":
+                                        _loop(v);
+                                        break;
+                                    }
+                                }
+                            }
+                        })(obj);
+                        
+                        return JSON.stringify(obj);
+                    }
+                    return "";
+                }
+
+                win["base"] = {"JSONStringifyEscape":JSONStringifyEscape};
+            })(window, document, $);
+        </script>
+        {{#block "inline.js"}}{{/block}}
+    </body>
+</html>

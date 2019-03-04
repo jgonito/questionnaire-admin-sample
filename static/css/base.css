@@ -1,0 +1,66 @@
+#menu.navbar-default .navbar-brand {
+    color: rgba(255, 255, 255, 1);
+}
+#menu.navbar-default {
+    font-size: 18px;
+    background-color: rgba(41, 117, 204, 1);
+    background: -webkit-linear-gradient(top, rgba(95, 165, 250, 1) 0%, rgba(41, 117, 204, 1) 100%);
+    background: linear-gradient(to bottom, rgba(95, 165, 250, 1) 0%, rgba(41, 117, 204, 1) 100%);
+    border-bottom-width: 1px;
+}
+#menu.navbar-default .navbar-nav>li>a {
+    color: rgba(252, 242, 242, 1);
+    background-color: rgba(41, 117, 204, 1);
+    background: -webkit-linear-gradient(top, rgba(95, 165, 250, 1) 0%, rgba(41, 117, 204, 1) 100%);
+    background: linear-gradient(to bottom, rgba(95, 165, 250, 1) 0%, rgba(41, 117, 204, 1) 100%);
+}
+#menu.navbar-default .navbar-nav>li>a:hover,
+#menu.navbar-default .navbar-nav>li>a:focus {
+    color: rgba(51, 51, 51, 1);
+    background-color: rgba(248, 248, 248, 0);
+}
+#menu.navbar-default .navbar-nav>.active>a,
+#menu.navbar-default .navbar-nav>.active>a:hover,
+#menu.navbar-default .navbar-nav>.active>a:focus {
+    color: rgba(5, 0, 0, 1);
+    background-color: rgba(231, 231, 231, 1);
+}
+#menu.navbar-default .navbar-toggle {
+    border-color: #ddd;
+}
+#menu.navbar-default .navbar-toggle:hover,
+#menu.navbar-default .navbar-toggle:focus {
+    background-color: #ddd;
+}
+#menu.navbar-default .navbar-toggle .icon-bar {
+    background-color: #888;
+}
+#menu.navbar-default .navbar-toggle:hover .icon-bar,
+#menu.navbar-default .navbar-toggle:focus .icon-bar {
+    background-color: #2975cc;
+}
+
+.navbar-default .navbar-nav > li > .active,
+.navbar-default .navbar-nav > li > .active:hover {
+    color: rgba(0, 0, 0, 1) !important;
+    text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.75);        
+    background: -webkit-linear-gradient(top, rgba(74, 207, 230, 1) 0%, rgba(30, 135, 150, 1) 100%);
+    background: linear-gradient(to bottom, rgba(74, 207, 230, 1) 0%, rgba(30, 135, 150, 1) 100%);
+    border-left: 1px solid rgba(255, 255, 255, 0.25);
+    border-right: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.navbar-default .navbar-nav > li > .active:after {
+    content: '';
+    display: block;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('../images/arrow-up.png') no-repeat center bottom/12px 10px;
+}
+
+textarea {
+    resize: none;
+}

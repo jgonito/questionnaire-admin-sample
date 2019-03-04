@@ -1,0 +1,682 @@
+{{#partial "inline.css"}}
+    <style>
+        .form-wrapper {
+            width: 86%;
+            margin: 20px auto 0;
+            padding: 20px 30px;
+            background-color: rgba(0,0,0,0.2);
+            border-radius: 5px;
+            box-shadow: 2px -2px 20px rgba(0,0,0,0.4);
+        }
+
+        #description {
+            resize: none;
+        }
+
+        #sub_category_list {
+            width: 100%;
+        }
+
+        #sub_category_list {
+            background-color: rgba(255, 255, 255, 1);
+        }
+
+        #sub_category_list [data-id] {
+            cursor: pointer;
+        }
+
+        #sub_category_list thead th:last-child {
+            width: 20%;
+        }
+        
+        #questions .question,
+        #filtered_questions .question {
+            margin-bottom: 3px;
+        }
+
+        #questions [data-question],
+        #filtered_questions [data-question] {
+            cursor: pointer;
+            background-color: #ffffff;
+        }
+
+        #questions .question.invalid [data-question] {
+            color: rgba(255, 0, 0, 0.8);
+            background-color: rgba(255, 120, 120, 0.15);
+        }
+
+        #filtered_questions {
+            position: relative;
+            max-height: 380px;
+            overflow-y: auto;
+        }
+
+        #filtered_questions.loading:after {
+            content: '';
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 5;
+            background-color: rgba(255, 255, 255, 0.7);
+        }
+
+        #choices .choice {
+            margin-top: 3px;
+        }
+
+        #question,
+        #choices .choice textarea {
+            background-color: #ffffff;
+        }
+    </style>
+{{/partial}}
+
+{{#partial "content"}}
+    <div class="form-wrapper">
+        <form id="questionnaire_form" action="/admin/questionnaires/save" method="post">
+            <div class="row">
+                <div class="col-sm-6">
+                    <input type="hidden" id="id" name="id" value="{{questionnaire.id}}" />
+
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" id="name" name="name" class="form-control" value="{{questionnaire.name}}" />
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="description" name="description" class="form-control" rows="3">{{questionnaire.description}}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select id="category" name="category" class="form-control">
+                        {{#each categories}}
+                            <option value="{{this.id}}"{{#ifeq this.id ../questionnaire.category_id}} selected{{/ifeq}}>{{this.name}}</option>
+                        {{/each}}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Sub Category</label>
+                        <select id="sub_category" name="sub_category" class="form-control" data-selected="{{questionnaire.sub_category_id}}"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Time Limit <i style="font-weight:normal;font-size:11px;">(seconds)</i></label>
+                        <input type="text" id="time_limit" name="time_limit" class="form-control" value="{{questionnaire.time_limit}}" />
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>No. of Questions</label>
+                                <input type="text" id="no_of_questions" name="no_of_questions" class="form-control" value="{{questionnaire.no_of_questions}}"{{#unless questionnaire.random}} readonly{{/unless}} />
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>Passing Score</label>
+                                <input type="text" id="passing_score" name="passing_score" class="form-control" value="{{questionnaire.passing_score}}" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="checkbox-inline">
+                                <label><input type="checkbox" id="allow_back" name="allow_back" value="1"{{#if questionnaire.allow_back}} checked{{/if}} />&nbsp;Allow Back</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="checkbox-inline">
+                                <label><input type="checkbox" id="random" name="random" value="1"{{#if questionnaire.random}} checked{{/if}} />&nbsp;Random</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="checkbox-inline">
+                                <label><input type="checkbox" id="allow_skip" name="allow_skip" value="1"{{#if questionnaire.allow_skip}} checked{{/if}} />&nbsp;Allow Skip</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="checkbox-inline">
+                                <label><input type="checkbox" id="is_active" name="is_active" value="1"{{#if questionnaire.is_active}} checked{{/if}} />&nbsp;Is Active</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr/>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <a href="/admin/questionnaires/" class="btn btn-info">
+                                <i class="fa fa-fw fa-arrow-left"></i>&nbsp;Back
+                            </a>
+                            <a href="/admin/questionnaires/new" class="btn btn-primary{{#unless questionnaire.id}} hide{{/unless}}">
+                                <i class="fa fa-fw fa-plus"></i>&nbsp;New
+                            </a>
+                        </div>
+                        <div class="col-sm-6 text-right">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fa fa-fw fa-save"></i>&nbsp;Save
+                            </button>
+                            <button type="button" data-action="delete-questionnaire" class="btn btn-danger{{#unless questionnaire.id}} hide{{/unless}}">
+                                <i class="fa fa-fw fa-times"></i>&nbsp;Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="row">
+                        <div class="col-sm-8">
+                            <h4>Questions&nbsp;<button type="button" id="add_question" class="btn btn-xs btn-success"><i class="fa fa-fw fa-plus"></i></button></h4>
+                        </div>
+                    </div>
+                    <div id="questions" class="{{#if questionnaire.random}} hide{{/if}}">
+                        {{#each questionnaire.questions}}
+                            <div class="input-group question" data-id="{{this.id}}" data-category-id="{{this.category_id}}" data-sub-category-id="{{this.sub_category_id}}" data-details="{{jsonify this}}">
+                                <div class="input-group-addon">
+                                    <div data-no style="width:20px;text-align:left;">{{sum @index 1}}</div>
+                                </div>
+                                <input type="text" data-question class="form-control" value="{{this.question}}" data-action="view-question" readonly />
+                                <input type="hidden" name="question[]" value="{{this.id}}" />
+                                <div class="input-group-btn">
+                                    <button type="button" data-action="remove-question" class="btn btn-danger">
+                                        <i class="fa fa-fw fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        {{/each}}
+                    </div>
+                    <div class="alert alert-warning text-center questions-random-wrapper{{#unless questionnaire.random}} hide{{/unless}}">
+                        <h5>Questions are set to random</h5>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+{{/partial}}
+
+{{#partial "preloaded"}}
+    <div id="filter_question_modal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Questions</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group">
+                        <div class="input-group-addon">
+                            <i class="fa fa-fw fa-search"></i>
+                        </div>
+                        <input type="text" id="question_keyword" class="form-control" placeholder="search question..." />
+                    </div>
+                    <hr/>
+                    <div id="filtered_questions"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="question_modal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Question</h4>
+                </div>
+                <div class="modal-body">
+                    <textarea id="question" class="form-control" readonly rows="4"></textarea>
+                    <div id="choices"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+{{/partial}}
+
+{{#partial "inline.js"}}
+    <script>
+        (function(win, doc, $){
+            "using strict";
+
+            var $questionnaireForm = $("#questionnaire_form"),
+                $filterQuestionModal = $("#filter_question_modal"),
+                $questionModal = $("#question_modal");
+
+            $questionnaireForm.find("#category").on("change", function(){
+                $.ajax({
+                    "url": "/api/v1/sub_category/",
+                    "data": {"category_id":this.value},
+                    "method": "GET",
+                    "dataType": "json",
+                    "success": function(response){
+                        if (response.status === "OK") {
+                            var subCategories = response.data,
+                                selected = +$questionnaireForm.find("#sub_category").attr("data-selected"),
+                                $df = $(doc.createDocumentFragment());
+                            
+                            $.each(subCategories, function(_, subCategory){
+                                $df.append("<option value='" + subCategory.id + "'" + (subCategory.id === selected ? " selected" : "") + ">" + subCategory.name + "</option>");
+                            });
+
+                            $df.append("<option value='0'" + (selected === 0 ? " selected" : 0) + ">N/A</option>");
+                            $("#sub_category")
+                                .html("")
+                                .append($df)
+                                .trigger("change");
+                        }
+                    }
+                });
+            }).trigger("change");
+
+            $questionnaireForm.find("#sub_category").on("change", function(){
+                var categoryID = +$questionnaireForm.find("#category").val(),
+                    subCategoryID = +$questionnaireForm.find("#sub_category").val();
+                
+                $questionnaireForm
+                    .find("#questions .question")
+                    .removeClass("invalid")
+                    .filter(function(_, q){
+                        var $q = $(q),
+                            qCategoryID = +$q.attr("data-category-id"),
+                            qSubCategoryID = +$q.attr("data-sub-category-id");
+
+                        if (qCategoryID !== categoryID) {
+                            return true;
+                        }
+                        
+                        if (subCategoryID !== 0) {
+                            return qSubCategoryID !== subCategoryID;
+                        }
+
+                        return false;
+                    })
+                    .addClass("invalid");
+            });
+
+            $questionnaireForm.find("#random").on("change", function(){
+                if (this.checked) {
+                    $questionnaireForm
+                        .find("#add_question")
+                        .prop("disabled", true)
+                        .removeClass("btn-success")
+                        .addClass("btn-default");
+
+                    $questionnaireForm
+                        .find(".questions-random-wrapper")
+                        .removeClass("hide");
+
+                    $questionnaireForm
+                        .find("#questions")
+                        .addClass("hide");
+
+                    $questionnaireForm
+                        .find("#no_of_questions")
+                        .prop("readonly", false)
+                        .focus();
+                } else {
+                    $questionnaireForm
+                        .find("#add_question")
+                        .prop("disabled", false)
+                        .removeClass("btn-default")
+                        .addClass("btn-success");
+
+                    $questionnaireForm
+                        .find(".questions-random-wrapper")
+                        .addClass("hide");
+
+                    $questionnaireForm
+                        .find("#questions")
+                        .removeClass("hide");
+
+                    $questionnaireForm
+                        .find("#no_of_questions")
+                        .prop("readonly", true)
+                        .val($questionnaireForm.find("#questions .question").length);
+                }
+            });
+            
+            $questionnaireForm.find("#add_question").on("click", function(e){
+                e.stopPropagation();
+                var $target = $(e.target);
+                if ($target.prop("id") !== "add_question") {
+                    $target = $target.closest("#add_question");
+                    if ($target.length === 0) {
+                        return;
+                    }
+                }
+                
+                if (!$target.prop("disabled")) {
+                    var categoryID = +$questionnaireForm.find("#category").val() || 0,
+                        subCategoryID = +$questionnaireForm.find("#sub_category").val() || 0;
+
+                    filterQuestions({
+                        "category_id": categoryID,
+                        "sub_category_id": subCategoryID
+                    }, {
+                        "onsuccess": function(response){
+                            if (response.status === "OK") {
+                                var questions = response.data,
+                                    $questionsHolder = $("#questions"),
+                                    $df = $(doc.createDocumentFragment());
+                                
+                                $.each(questions, function(_, question){
+                                    var $question = $(
+                                            "<div class='input-group question' data-details='" + base.JSONStringifyEscape(question) + "'>" +
+                                                "<input type='text' data-question class='form-control' value='" + question.question + "' data-action='view-question' readonly />" +
+                                                "<div class='input-group-btn'>" +
+                                                    "<button type='button' class='btn btn-success' data-action='add-question'>" +
+                                                        "<i class='fa fa-fw fa-plus'></i>" +
+                                                    "</button>" +
+                                                "</div>" +
+                                            "</div>"
+                                        );
+
+                                    if ($questionsHolder.find(".question[data-id='" + question.id + "']").length > 0) {
+                                        $question
+                                            .find("[data-action='add-question']")
+                                            .removeClass("btn-success")
+                                            .addClass("btn-default")
+                                            .prop("disabled", true);
+                                    }
+
+                                    $df.append($question);
+                                });
+                                $filterQuestionModal.find("#filtered_questions").html("").append($df);
+                            }
+                        },
+                        "oncomplete": function(){
+                            $filterQuestionModal.modal("show");
+                        }
+                    });
+                }
+            });
+
+            $questionnaireForm.find("#questions").on("click", function(e){
+                e.stopPropagation();
+                var $target = $(e.target);
+                if (!$target[0].hasAttribute("data-action")) {
+                    $target = $target.closest("[data-action]");
+                    if ($target.length === 0) {
+                        return;
+                    }
+                }
+
+                var question = JSON.parse($target.closest("[data-details]").attr("data-details"));
+                switch ($target.attr("data-action")) {
+                    case "remove-question":
+                        $target.closest(".question").remove();
+                        var $questionsHolder = $questionnaireForm.find("#questions");
+                        $questionsHolder.find(".question").each(function(i, v){
+                            $(v).find("[data-no]").text(i + 1);
+                        });
+                        $questionnaireForm.find("#no_of_questions").val($questionsHolder.find(".question").length);
+                        break;
+                    case "view-question":
+                        $questionModal.find("#question").val(question.question);
+
+                        var $df = $(doc.createDocumentFragment());
+                        $.each(question.choices, function(_, choice){
+                            var correctHTML = !!+choice.correct
+                                    ? "<span class='input-group-addon alert-success'><i class='fa fa-fw fa-check'></i></span>"
+                                    : "<span class='input-group-addon alert-danger'><i class='fa fa-fw fa-times'></i></span>";
+                            $df.append(
+                                "<div class='input-group choice'>" +
+                                    "<span class='input-group-addon'>" + choice.letter + "</span>" +
+                                    "<textarea class='form-control' readonly rows='2'>" + choice.details + "</textarea>" +
+                                    correctHTML +
+                                "</div>"
+                            );
+                        });
+                        $questionModal.find("#choices").html("").append($df);
+
+                        $questionModal.modal("show");
+                        break;
+                }
+            });
+
+            var searchTimeout;
+            $filterQuestionModal.find("#question_keyword").on("input", function(e){
+                if (searchTimeout) {
+                    clearTimeout(searchTimeout);
+                }
+
+                var $keyword = $(this),
+                    keyword = $.trim(this.value),
+                    categoryID = +$questionnaireForm.find("#category").val() || 0,
+                    subCategoryID = +$questionnaireForm.find("#sub_category").val() || 0,
+                    $icon = $keyword.closest(".input-group").find("i.fa"),
+                    handleResponse = function(response){
+                        if (response.status === "OK") {
+                            var questions = response.data,
+                                $questionsHolder = $("#questions"),
+                                $df = $(doc.createDocumentFragment());
+                            
+                            $.each(questions, function(_, question){
+                                var $question = $(
+                                        "<div class='input-group question' data-details='" + base.JSONStringifyEscape(question) + "'>" +
+                                            "<input type='text' data-question class='form-control' value='" + question.question + "' data-action='view-question' readonly />" +
+                                            "<div class='input-group-btn'>" +
+                                                "<button type='button' class='btn btn-success' data-action='add-question'>" +
+                                                    "<i class='fa fa-fw fa-plus'></i>" +
+                                                "</button>" +
+                                            "</div>" +
+                                        "</div>"
+                                    );
+
+                                if ($questionsHolder.find(".question[data-id='" + question.id + "']").length > 0) {
+                                    $question
+                                        .find("[data-action='add-question']")
+                                        .removeClass("btn-success")
+                                        .addClass("btn-default")
+                                        .prop("disabled", true);
+                                }
+
+                                $df.append($question);
+                            });
+
+                            $filterQuestionModal
+                                .find("#filtered_questions")
+                                .removeClass("loading")
+                                .html("")
+                                .append($df);
+                        }
+                    };
+
+                $keyword.val(keyword);
+
+                $filterQuestionModal.find("#filtered_questions").addClass("loading");
+                if (keyword === "") {
+                    $icon.removeClass("fa-spinner fa-spin").addClass("fa-search");
+
+                    filterQuestions({
+                        "category_id": categoryID,
+                        "sub_category_id": subCategoryID
+                    }, {
+                        "onsuccess": handleResponse,
+                        "oncomplete": function(){
+                            $filterQuestionModal.find("#filtered_questions").removeClass("loading");
+                        }
+                    });
+                } else {
+                    $icon.removeClass("fa-search").addClass("fa-spinner fa-spin");
+
+                    searchTimeout = setTimeout(function(){
+                        filterQuestions({
+                            "category_id": categoryID,
+                            "sub_category_id": subCategoryID,
+                            "keyword": keyword
+                        }, {
+                            "onsuccess": handleResponse,
+                            "oncomplete": function(){
+                                $icon.removeClass("fa-spinner fa-spin").addClass("fa-search");
+                                $filterQuestionModal.find("#filtered_questions").removeClass("loading");
+                            }
+                        });
+                    }, 1000);
+                }
+            });
+
+            $filterQuestionModal.find("#filtered_questions").on("click", function(e){
+                e.stopPropagation();
+                var $target = $(e.target);
+                if (!$target[0].hasAttribute("data-action")) {
+                    $target = $target.closest("[data-action]");
+                    if ($target.length === 0) {
+                        return;
+                    }
+                }
+
+                var question = JSON.parse($target.closest("[data-details]").attr("data-details"));
+                switch ($target.attr("data-action")) {
+                    case "add-question":
+                        var $questionsHolder = $questionnaireForm.find("#questions");
+                        if (!$target.prop("disabled") && $questionsHolder.find(".question[data-id='" + question.id + "']").length === 0) {
+                            $questionsHolder.append(
+                                "<div class='input-group question' data-id='" + question.id + "' data-category-id='" + question.category_id + "' data-sub-category-id='" + question.sub_category_id + "' data-details='" + base.JSONStringifyEscape(question) + "'>" +
+                                    "<div class='input-group-addon'>" +
+                                        "<div data-no style='width:20px;text-align:left;'>" + ($questionsHolder.find(".question").length + 1) + "</div>" +
+                                    "</div>" +
+                                    "<input type='text' data-question class='form-control' value='" + question.question + "' data-action='view-question' readonly />" +
+                                    "<input type='hidden' name='question[]' value='" + question.id + "' />" +
+                                    "<div class='input-group-btn'>" +
+                                        "<button type='button' data-action='remove-question' class='btn btn-danger'>" +
+                                            "<i class='fa fa-fw fa-times'></i>" +
+                                        "</button>" +
+                                    "</div>" +
+                                "</div>"
+                            );
+
+                            $questionnaireForm.find("#no_of_questions").val($questionsHolder.find(".question").length);
+
+                            $target
+                                .removeClass("btn-success")
+                                .addClass("btn-default")
+                                .prop("disabled", true);
+                        }
+                        break;
+                    case "view-question":
+                        $questionModal.find("#question").val(question.question);
+
+                        var $df = $(doc.createDocumentFragment());
+                        $.each(question.choices, function(_, choice){
+                            console.log(choice);
+                            
+                            var correctHTML = !!+choice.correct
+                                    ? "<span class='input-group-addon alert-success'><i class='fa fa-fw fa-check'></i></span>"
+                                    : "<span class='input-group-addon alert-danger'><i class='fa fa-fw fa-times'></i></span>";
+                            $df.append(
+                                "<div class='input-group choice'>" +
+                                    "<span class='input-group-addon'>" + choice.letter + "</span>" +
+                                    "<textarea class='form-control' readonly rows='2'>" + choice.details + "</textarea>" +
+                                    correctHTML +
+                                "</div>"
+                            );
+                        });
+                        $questionModal.find("#choices").html("").append($df);
+
+                        $questionModal.modal("show");
+                        break;
+                }
+            });
+
+            $filterQuestionModal.on("hidden.bs.modal", function(){
+                $filterQuestionModal.find("#question_keyword").val("");
+                $filterQuestionModal.find("#filtered_questions").html("");
+            });
+
+            $questionModal.on("hidden.bs.modal", function(){
+                $question.find("#question").val("");
+                $question.find("#choices").html("");
+            });
+
+            $questionnaireForm.on("submit", function(e){
+                var $name = $questionnaireForm.find("#name"),
+                    $description = $questionnaireForm.find("#description"),
+                    $timeLimit = $questionnaireForm.find("#time_limit"),
+                    $noOfQuestions = $questionnaireForm.find("#no_of_questions"),
+                    $passingScore = $questionnaireForm.find("#passing_score"),
+                    name = $.trim($name.val()),
+                    description = $.trim($description.val()),
+                    timeLimit = +$.trim($timeLimit.val()) || 0,
+                    noOfQuestions = +$.trim($noOfQuestions.val()) || 0,
+                    passingScore = +$.trim($passingScore.val()) || 0,
+                    random = $questionnaireForm.find("#random").prop("checked"),
+                    $questions = $("#questions .question");
+
+                $name.val(name);
+                $description.val(description);
+                $timeLimit.val(timeLimit);
+                $noOfQuestions.val(noOfQuestions);
+                $passingScore.val(passingScore);
+
+                if (name === "") {
+                    e.preventDefault();
+                    $name.focus();
+                    alert("Name cannot be empty");
+                    return;
+                }
+
+                if (random && (isNaN(noOfQuestions) || noOfQuestions < 1)) {
+                    e.preventDefault();
+                    $noOfQuestions.focus();
+                    alert("Invalid no. of questions");
+                    return;
+                }
+                
+                if (!random && noOfQuestions !== $questions.length) {
+                    e.preventDefault();
+                    alert("Questions does not match 'No. of Questions'");
+                    return;
+                }
+                
+                if (!isNaN(passingScore) || passingScore < 1 || passingScore > noOfQuestions) {
+                    e.preventDefault();
+                    alert("Invalid passing score");
+                    return;
+                }
+                
+                if ($questions.filter(function(_, q){ return $(q).hasClass("invalid") }).length > 0) {
+                    e.preventDefault();
+                    alert("Some questions are invalid. Remove them first then try to submit again.");
+                    return;
+                }
+            });
+
+            $questionnaireForm.find("[data-action='delete-questionnaire']").on("click", function(e){
+                e.stopPropagation();
+                var $target = $(e.target);
+                if (!$target[0].hasAttribute("data-action")) {
+                    $target = $target.closest("[data-action]");
+                    if ($target.length === 0) {
+                        return;
+                    }
+                }
+
+                if ($target.attr("data-action") === "delete-questionnaire") {
+                    if (confirm("Are you sure you want to delete this questionnaire?")) {
+                        win.location.href = "/admin/questionnaires/delete/?id=" + $("#id").val();
+                    }
+                }
+            });
+            
+            function filterQuestions(params, events) {
+                (!(events.onsuccess instanceof Function)) && (events.onsuccess = function(){});
+                (!(events.onerror instanceof Function)) && (events.onerror = function(){});
+                (!(events.oncomplete instanceof Function)) && (events.oncomplete = function(){});
+                
+                $.ajax({
+                    "url": "/api/v1/question/",
+                    "data": params,
+                    "method": "GET",
+                    "dataType": "json",
+                    "success": events.onsuccess,
+                    "error": events.onerror,
+                    "complete": events.oncomplete
+                });
+            }
+        })(window, document, $);
+    </script>
+{{/partial}}
+{{> base}}

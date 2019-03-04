@@ -1,0 +1,16 @@
+{
+    "name": "questionnaire",
+    "version": "1.0.0",
+    "description": "A simple app for managing and answering a questionnaire",
+    "main": "main.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "Jerick Gonito",
+    "license": "ISC",
+    "dependencies": {
+        "cookies": "^0.7.3",
+        "handlebars": "^4.0.12",
+        "mysql": "^2.16.0"
+    }
+}

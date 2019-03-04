@@ -1,0 +1,89 @@
+{{#partial "inline.css"}}
+    <style>
+        #question_list {
+            width: 100%;
+        }
+
+        #question_list [data-id] {
+            cursor: pointer;
+        }
+
+        #question_list thead th:first-child {
+            width: 35%;
+        }
+
+        #question_list thead th:nth-child(2),
+        #question_list thead th:nth-child(3) {
+            width: 25%;
+        }
+
+        #question_list thead th:last-child {
+            width: 15%;
+        }
+    </style>
+{{/partial}}
+
+{{#partial "content"}}
+    <div class="row">
+        <div class="col-sm-offset-8 col-sm-4 text-right">
+            <a href="/admin/questions/new" class="btn btn-primary">
+                <i class="fa fa-fw fa-plus"></i>&nbsp;New
+            </a>
+        </div>
+    </div>
+    <table id="question_list" class="table">
+        <thead>
+            <th>Question</th>
+            <th>Category</th>
+            <th>Sub Category</th>
+            <th>Is Active</th>
+        </thead>
+        <tbody>
+        {{#each questions}}
+            <tr data-id="{{this.id}}">
+                <td>{{this.question}}</td>
+                <td>{{this.category}}</td>
+                <td>{{this.sub_category}}</td>
+                {{#if this.is_active}}
+                    <td class="text-success">
+                        <i class="fa fa-fw fa-check"></i>
+                    </td>
+                {{else}}
+                    <td class="text-danger">
+                        <i class="fa fa-fw fa-times"></i>
+                    </td>
+                {{/if}}
+            </tr>
+        {{else}}
+            <tr class="text-danger no-record">
+                <td colspan="5">
+                    <div class="alert alert-danger text-center">No Records</div>
+                </td>
+            </tr>
+        {{/each}}
+        </tbody>
+    </table>
+{{/partial}}
+
+{{#partial "inline.js"}}
+    <script>
+        (function(win, doc, $){
+            "using strict";
+            
+            $("#question_list").on("click", function(e){
+                e.stopPropagation();
+                var $target = $(e.target);
+                if (!$target[0].hasAttribute("data-id")) {
+                    $target = $target.closest("[data-id]");
+                    if ($target.length === 0) {
+                        return;
+                    }
+                }
+
+                win.location.href = "/admin/questions/edit/?id=" + $target.attr("data-id");
+            });
+            
+        })(window, document, $);
+    </script>
+{{/partial}}
+{{> base}}
